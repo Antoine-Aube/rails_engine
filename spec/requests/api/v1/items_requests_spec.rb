@@ -41,4 +41,39 @@ RSpec.describe 'Items API' do
       expect(item_attributes[:merchant_id]).to be_an(Integer)
     end
   end
+
+  describe "response for a single item" do 
+    it "sends a formatted JSON response for a single item" do
+      id = create(:item).id
+    
+      get "/api/v1/items/#{id}"
+      expect(response).to be_successful
+
+      formatted_item = JSON.parse(response.body, symbolize_names: true)
+      item = formatted_item[:data]
+
+      expect(item).to have_key(:id)
+      expect(item[:id]).to be_an(String)
+
+      expect(item).to have_key(:type)
+      expect(item[:type]).to be_an(String)
+
+      expect(item).to have_key(:attributes)
+      expect(item[:attributes]).to be_an(Hash)
+
+      item_attributes = item[:attributes]
+
+      expect(item_attributes).to have_key(:name) 
+      expect(item_attributes[:name]).to be_an(String)
+
+      expect(item_attributes).to have_key(:description)
+      expect(item_attributes[:description]).to be_an(String)
+      
+      expect(item_attributes).to have_key(:unit_price) 
+      expect(item_attributes[:unit_price]).to be_an(Float)
+
+      expect(item_attributes).to have_key(:merchant_id)
+      expect(item_attributes[:merchant_id]).to be_an(Integer)
+    end
+  end
 end
