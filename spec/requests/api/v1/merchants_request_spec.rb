@@ -24,6 +24,26 @@ RSpec.describe 'Merchants API' do
         expect(merchant).to have_key(:attributes)
         expect(merchant[:attributes]).to be_an(Hash)
       end
-    end 
+    end
+  end 
+
+  describe "response for a single merchant" do 
+    it "sends a formatted JSON response of a single merchant" do
+      id = create(:merchant).id
+
+      get "/api/v1/merchants/#{id}"
+      formatted_merchant = JSON.parse(response.body, symbolize_names: true)
+      merchant = formatted_merchant[:data]
+      expect(response).to be_successful
+
+      expect(merchant).to have_key(:id) 
+      expect(merchant[:id]).to be_an(String)
+      
+      expect(merchant).to have_key(:type)
+      expect(merchant[:type]).to be_an(String)
+
+      expect(merchant).to have_key(:attributes)
+      expect(merchant[:attributes]).to be_an(Hash)
+    end
   end
 end
