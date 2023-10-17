@@ -27,7 +27,7 @@ RSpec.describe 'Items API' do
       end
 
       item_attributes = items.first[:attributes]
-      require 'pry';binding.pry
+      # require 'pry';binding.pry
       expect(item_attributes).to have_key(:name) 
       expect(item_attributes[:name]).to be_an(String)
 
