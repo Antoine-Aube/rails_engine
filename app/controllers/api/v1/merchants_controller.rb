@@ -9,6 +9,11 @@ class Api::V1::MerchantsController < ApplicationController
     render json: MerchantSerializer.new(find_merchant)
   end
   
+
+  # def items
+  #   render json: ItemSerializer.new(find_merchant.items)
+  # end
+
   private
 
   def find_merchant
