@@ -5,8 +5,19 @@ Rails.application.routes.draw do
   # root "articles#index"
   namespace :api do 
     namespace :v1 do
-      resources :merchants, only: [:index, :show]
+      resources :merchants, only: [:index, :show] do 
+
+        get 'items', on: :member, to: "merchants_items#index"
+      end
     end
   end
-end
+
+  namespace :api do
+    namespace :v1 do
+      resources :items, only: [:index, :show]
+    end
+  end
+end 
+
+
 

@@ -1,4 +1,6 @@
 class Api::V1::MerchantsController < ApplicationController
+  before_action :find_merchant, only: [:show, :items]
+
   def index
     render json: MerchantSerializer.new(Merchant.all)
   end
@@ -6,7 +8,7 @@ class Api::V1::MerchantsController < ApplicationController
   def show
     render json: MerchantSerializer.new(find_merchant)
   end
-
+  
   private
 
   def find_merchant
