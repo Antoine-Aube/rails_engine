@@ -201,4 +201,20 @@ RSpec.describe 'Items API' do
       expect(merchant_attributes[:name]).to be_an(String)
     end
   end
+
+  describe "find_all endpoint" do
+    it "sends a formatted JSON response of all items that match the search criteria" do
+      merchant  = create(:merchant, id: 1)
+      item_1 = create(:item, name: "Old Shoes", merchant_id: 1)
+      item_2 = create(:item, name: "Nice Shoes", merchant_id: 1)
+      item_3 = create(:item, name: "Shirt", merchant_id: 1)
+      item_4 = create(:item, name: "Pants", merchant_id: 1)
+
+      get "/api/v1/items/find_all?name=shoes"
+      formatted_response = JSON.parse(response.body, symbolize_names: true)
+      items_returned = formatted_response[:data]
+
+      expect(items_returned.count).to eq(2)
+    end
+  end
 end
