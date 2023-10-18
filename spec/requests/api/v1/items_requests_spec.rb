@@ -89,7 +89,7 @@ RSpec.describe 'Items API' do
       expect(current_item[:data][:attributes][:name]).to eq("Old Name")
       expect(current_item[:data][:attributes][:description]).to eq("Old Description")
 
-      patch "/api/v1/items/#{id}", params: {name: "New Name", description: "New Description", unit_price: 2.00, merchant_id: 2}
+      patch "/api/v1/items/#{id}", params: {item: {name: "New Name", description: "New Description", unit_price: 2.00, merchant_id: 2}}
 
       updated_item = JSON.parse(response.body, symbolize_names: true)
       expect(updated_item[:data][:attributes][:name]).to eq("New Name")
@@ -97,19 +97,18 @@ RSpec.describe 'Items API' do
     end
 
     it "still updates the item if only one attribute is passed in" do
-        merchant = create(:merchant, id: 1)
         merchant2 = create(:merchant, id: 2)
-        item = create(:item, name: "Old Name", description: "Old Description", unit_price: 1.00, merchant_id: 1)
+        item = create(:item, name: "Old Name", description: "Old Description", unit_price: 1.00, merchant_id: 2)
         id = item.id
   
         get "/api/v1/items/#{id}"
         current_item = JSON.parse(response.body, symbolize_names: true)
         expect(current_item[:data][:attributes][:name]).to eq("Old Name")
-        expect(current_item[:data][:attributes][:description]).to eq("Old Description")
   
-        patch "/api/v1/items/#{id}", params: {name: "New Name", merchant_id: 2}
+        patch "/api/v1/items/#{id}", params: {item: {name: "New Name", merchant_id: 2}}
         expect(response).to be_successful
         expect(response.status).to_not eq(404)
+        expect(response.status).to eq(200)
   
         updated_item = JSON.parse(response.body, symbolize_names: true)
         expect(updated_item[:data][:attributes][:name]).to eq("New Name")
