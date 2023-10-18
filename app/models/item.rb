@@ -6,4 +6,10 @@ class Item < ApplicationRecord
                         :description,
                         :unit_price,
                         :merchant_id
-end
+
+
+
+  def self.find_all_items(item)
+    where("name ILIKE ?", "%#{item}%")
+  end
+end 
