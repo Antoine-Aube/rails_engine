@@ -133,7 +133,7 @@ RSpec.describe 'Items API' do
     end
   end
 
-  describe "response for updating an item" do 
+  describe "update endpoint" do 
     it "sends a formatted JSON response of the updated item" do 
       merchant = create(:merchant, id: 1)
       merchant2 = create(:merchant, id: 2)
@@ -168,6 +168,37 @@ RSpec.describe 'Items API' do
   
         updated_item = JSON.parse(response.body, symbolize_names: true)
         expect(updated_item[:data][:attributes][:name]).to eq("New Name")
+    end
+  end
+
+  describe "merchant endpoint" do
+    it "sends a formatted JSON response of the merchant for a single item" do
+      merchant2 = create(:merchant, id: 2)
+      item = create(:item,  merchant_id: 2)
+
+      get "/api/v1/items/#{item.id}/merchant"
+      expect(response).to be_successful
+      expect(response.status).to_not eq(404)
+      expect(response.status).to eq(200)
+
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+      merchant = parsed_response[:data]
+      # require 'pry';binding.pry
+
+      expect(merchant).to have_key(:id)
+      expect(merchant[:id]).to be_an(String)
+      
+      expect(merchant).to have_key(:type)
+      expect(merchant[:type]).to be_an(String)
+
+      expect(merchant).to have_key(:attributes)
+      expect(merchant[:attributes]).to be_an(Hash)
+
+      merchant_attributes = merchant[:attributes]
+
+      expect(merchant_attributes).to have_key(:name)
+      expect(merchant_attributes[:name]).to be_an(String)
     end
   end
 end
