@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Items API' do
-  describe 'response for all items' do
+  describe 'index enpoint' do
     it "sends a formatted JSON response of all items" do
       create_list(:item, 10)
 
@@ -42,7 +42,7 @@ RSpec.describe 'Items API' do
     end
   end
 
-  describe "response for a single item" do 
+  describe "show endpoint" do 
     it "sends a formatted JSON response for a single item" do
       id = create(:item).id
     
@@ -74,6 +74,62 @@ RSpec.describe 'Items API' do
 
       expect(item_attributes).to have_key(:merchant_id)
       expect(item_attributes[:merchant_id]).to be_an(Integer)
+    end
+  end
+
+  describe "post endpoint" do 
+    it "creates a new item" do
+      merchant = create(:merchant, id: 1)
+      post "/api/v1/items", params: {item: {name: "New Item", description: "New Description", unit_price: 1.00, merchant_id: 1}}
+
+      expect(response).to be_successful
+      expect(response.status).to_not eq(404)
+      expect(response.status).to eq(201)
+
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+      new_item = parsed_response[:data]
+
+      expect(new_item).to have_key(:id)
+      expect(new_item[:id]).to be_an(String)
+
+      expect(new_item).to have_key(:type)
+      expect(new_item[:type]).to be_an(String)
+
+      expect(new_item).to have_key(:attributes)
+      expect(new_item[:attributes]).to be_an(Hash)
+
+      new_item_attributes = new_item[:attributes]
+
+      expect(new_item_attributes).to have_key(:name)
+      expect(new_item_attributes[:name]).to be_an(String)
+      
+      expect(new_item_attributes).to have_key(:description)
+      expect(new_item_attributes[:description]).to be_an(String)
+
+      expect(new_item_attributes).to have_key(:unit_price)
+      expect(new_item_attributes[:unit_price]).to be_an(Float)
+      
+      expect(new_item_attributes).to have_key(:merchant_id)
+      expect(new_item_attributes[:merchant_id]).to be_an(Integer)
+    end
+  end
+
+  describe "delete endpoint" do
+    it "deletes an item" do
+      merchant = create(:merchant)
+      items = create_list(:item, 10, merchant_id: merchant.id)
+
+      item = items.first
+      delete "/api/v1/items/#{item.id}"
+
+      expect(response).to be_successful
+      expect(response.status).to_not eq(404)
+      expect(response.status).to eq(204)
+
+      expect(Item.count).to eq(9)
+      expect(merchant.items.count).to eq(9)
+      expect(Item.where(id: item.id)).to_not exist
+      expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
