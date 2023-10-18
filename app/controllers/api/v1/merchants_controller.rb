@@ -16,7 +16,7 @@ def find_one
   if @merchant
     render json: MerchantSerializer.new(@merchant)
   else
-    render json: { data: {} }
+    render json: { data: {} }, status: 200
   end 
 end
 
