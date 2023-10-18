@@ -10,8 +10,13 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    item = Item.create(item_params)
-    render json: ItemSerializer.new(item), status: :created
+    item = Item.new(item_params) 
+
+    if item.save 
+      render json: ItemSerializer.new(item), status: :created
+    else
+      render json: { errors: item.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -23,8 +28,13 @@ class Api::V1::ItemsController < ApplicationController
     if item.update(item_params)
       render json: ItemSerializer.new(item)
     else
-      render json: { errors: [{ detail: item.errors }] }, status: 400
+      render json: { errors: [{ detail: item.errors.full_messages }] }, status: 400
     end
+  end
+
+  def find_all
+    @items = Item.find_all_items(params[:name])
+    render json: ItemSerializer.new(@items)
   end
 
   private
