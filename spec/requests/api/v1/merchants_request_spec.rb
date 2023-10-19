@@ -111,7 +111,7 @@ RSpec.describe 'Merchants API' do
       formatted_merchant = JSON.parse(response.body, symbolize_names: true)
       merchant = formatted_merchant[:data]
 
-      expect(merchant).to eq({})
+      expect(merchant).to eq({id: nil, type: nil, attributes:{}})
     end
   end
 end
