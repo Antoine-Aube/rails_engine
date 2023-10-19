@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Merchants API' do
-  describe 'response for all merchants' do 
+  describe 'all merchants endoint' do 
     it "send a formatted JSON reponse of all merchants" do 
       create_list(:merchant, 10)
 
@@ -27,7 +27,7 @@ RSpec.describe 'Merchants API' do
     end
   end 
 
-  describe "response for a single merchant" do 
+  describe "merchant show endpoint" do 
     it "sends a formatted JSON response of a single merchant" do
       id = create(:merchant).id
 
@@ -48,7 +48,7 @@ RSpec.describe 'Merchants API' do
     end
   end
 
-  describe "it returns all the items for a merchant" do
+  describe "items for a merchant endpoint" do
     it "sends a formatted JSON response of all items for a merchant" do
       id = create(:merchant).id
       items = create_list(:item, 10, merchant_id: id)

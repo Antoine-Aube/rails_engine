@@ -4,6 +4,8 @@ class ItemSerializer
               :description,
               :unit_price,
               :merchant_id
+              
+#saving this for future reference
   # def self.serialize(items)
   #   data = []
   #   items.each do |item|
