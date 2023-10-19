@@ -9,7 +9,7 @@ class Item < ApplicationRecord
 
 
 
-  def self.find_all_items(item)
+  def self.find_all_items_search(item)
     where("name ILIKE ?", "%#{item}%")
   end
 end 

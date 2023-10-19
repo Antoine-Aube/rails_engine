@@ -18,7 +18,7 @@ Rails.application.routes.draw do
         get 'merchant', to: 'items/merchants#show', on: :member
         
         collection do   
-          get 'find_all', to: 'items#find_all'
+          get 'find_all', to: 'items#find_all_search'
         end 
       end
     end
