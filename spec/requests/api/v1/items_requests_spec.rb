@@ -184,7 +184,6 @@ RSpec.describe 'Items API' do
       parsed_response = JSON.parse(response.body, symbolize_names: true)
 
       merchant = parsed_response[:data]
-      # require 'pry';binding.pry
 
       expect(merchant).to have_key(:id)
       expect(merchant[:id]).to be_an(String)
@@ -272,6 +271,14 @@ RSpec.describe 'Items API' do
         expect(response).to_not be_successful
         expect(response.status).to eq(400)
       end
+
+      it "return a 400 status code if an invalid merchant id is passed for an update" do 
+        create(:merchant, id: 1)
+        create(:item, id: 1, merchant_id: 1)
+        patch "/api/v1/items/1", params: {merchant_id: 99999, item: {name: "New Item", description: "New Description", unit_price: 1.00, merchant_id: 99999}}
+
+        expect(response.status).to eq(400) 
+      end 
     end
   end
 end
