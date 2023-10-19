@@ -202,7 +202,7 @@ RSpec.describe 'Items API' do
     end
   end
 
-  describe "find_all endpoint" do
+  describe "search endpoint" do
     it "sends a formatted JSON response of all items that match the search criteria" do
       merchant  = create(:merchant, id: 1)
       item_1 = create(:item, name: "Old Shoes", merchant_id: 1)
@@ -215,6 +215,63 @@ RSpec.describe 'Items API' do
       items_returned = formatted_response[:data]
 
       expect(items_returned.count).to eq(2)
+    end
+
+    it "send a formatted response of all items by min price" do
+      merchant  = create(:merchant, id: 1)
+      item_1 = create(:item, name: "Old Shoes",unit_price: 10.01, merchant_id: 1)
+      item_2 = create(:item, name: "Nice Shoes", unit_price: 18.45, merchant_id: 1)
+      item_3 = create(:item, name: "Shirt", unit_price: 23.23, merchant_id: 1)
+      item_4 = create(:item, name: "Pants", unit_price: 50.12, merchant_id: 1)
+
+      get "/api/v1/items/find_all?min_price=20"
+      formatted_response = JSON.parse(response.body, symbolize_names: true)
+      items_returned = formatted_response[:data]
+
+      expect(items_returned.count).to eq(2)
+
+      items_returned.each do |item|
+        expect(item[:attributes][:unit_price]).to be >= 20
+      end
+    end
+
+    it "send a formatted response of all items by max price" do
+      merchant  = create(:merchant, id: 1)
+      item_1 = create(:item, name: "Old Shoes",unit_price: 10.01, merchant_id: 1)
+      item_2 = create(:item, name: "Nice Shoes", unit_price: 18.45, merchant_id: 1)
+      item_3 = create(:item, name: "Shirt", unit_price: 23.23, merchant_id: 1)
+      item_4 = create(:item, name: "Pants", unit_price: 50.12, merchant_id: 1)
+
+      get "/api/v1/items/find_all?max_price=20"
+      formatted_response = JSON.parse(response.body, symbolize_names: true)
+      items_returned = formatted_response[:data]
+
+      expect(items_returned.count).to eq(2)
+
+      items_returned.each do |item|
+        expect(item[:attributes][:unit_price]).to be <= 20
+      end
+    end
+
+    describe "sad path" do
+      it "returns a 400 status code if no name and price parameters are both passed" do
+        get "/api/v1/items/find_all?name=thing&min_price=20"
+
+        expect(response).to_not be_successful
+        expect(response.status).to eq(400)
+
+        get "/api/v1/items/find_all?name=thing&max_price=20"
+
+        expect(response).to_not be_successful
+        expect(response.status).to eq(400)
+      end 
+
+      it "returns a 400 status code if a negative number is passed in for price" do
+        get "/api/v1/items/find_all?min_price=-20"
+
+        expect(response).to_not be_successful
+        expect(response.status).to eq(400)
+      end
     end
   end
 end
