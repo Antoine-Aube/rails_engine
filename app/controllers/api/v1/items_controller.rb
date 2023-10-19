@@ -32,9 +32,23 @@ class Api::V1::ItemsController < ApplicationController
     end
   end
 
-  def find_all_search
-    @items = Item.find_all_items_search(params[:name])
-    render json: ItemSerializer.new(@items)
+  def search
+    if params[:name].present? && params[:max_price].present?
+      render json: { errors: "Please enter only one parameter" }, status: 400
+    elsif params[:name].present? && params[:min_price].present?
+      render json: { errors: "Please enter only one parameter" }, status: 400
+    elsif params[:max_price].to_f < 0 || params[:min_price].to_f < 0
+      render json: { errors: "Please enter a positive number" }, status: 400
+    elsif params[:min_price]
+      min_items = Item.find_by_min_price(params[:min_price])
+      render json: ItemSerializer.new(min_items)
+    elsif params[:max_price]
+      max_items =Item.find_by_max_price(params[:max_price])
+      render json: ItemSerializer.new(max_items)
+    elsif params[:name]
+      @items = Item.find_all_items_search(params[:name])
+      render json: ItemSerializer.new(@items)
+    end
   end
 
   private

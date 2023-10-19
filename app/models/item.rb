@@ -12,4 +12,12 @@ class Item < ApplicationRecord
   def self.find_all_items_search(item)
     where("name ILIKE ?", "%#{item}%")
   end
+
+  def self.find_by_min_price(price)
+    where("unit_price >= ?", "#{price}").order(:name)
+  end
+
+  def self.find_by_max_price(price)
+    where("unit_price <= ?", "#{price}").order(:name)
+  end
 end 
