@@ -83,6 +83,14 @@ RSpec.describe 'Merchants API' do
       expect(item_atttributes).to have_key(:merchant_id)
       expect(item_atttributes[:merchant_id]).to be_a(Integer)
     end
+
+    it "returns a customized error if bad if is passed" do 
+      get "/api/v1/merchants/'garbage'/items"
+
+      formatted_response = JSON.parse(response.body, symbolize_names: true)
+
+      expect(formatted_response).to be_an(Hash)
+    end
   end
 
   describe "find_one merchant endpoint" do 
