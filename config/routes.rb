@@ -3,7 +3,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "articles#index"
-
   namespace :api do
     namespace :v1 do
       resources :merchants, only: [:index, :show] do
@@ -18,8 +17,8 @@ Rails.application.routes.draw do
         get 'merchant', to: 'items/merchants#show', on: :member
         
         collection do   
-          get 'find_all', to: 'items#find_all_search'
-        end 
+          get 'find_all', to: 'items#search'
+        end
       end
     end
   end
