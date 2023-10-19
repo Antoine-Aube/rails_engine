@@ -1,5 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
   before_action :find_item, only: [:destroy, :update]
+  rescue_from ActiveRecord::RecordInvalid, with: :invalid_response
 
   def index
     render json: ItemSerializer.new(Item.all)
@@ -11,12 +12,8 @@ class Api::V1::ItemsController < ApplicationController
 
   def create
     item = Item.new(item_params) 
-
-    if item.save 
-      render json: ItemSerializer.new(item), status: :created
-    else
-      render json: { errors: item.errors.full_messages }, status: :unprocessable_entity
-    end
+    item.save 
+    render json: ItemSerializer.new(item), status: :created
   end
 
   def destroy
@@ -25,11 +22,8 @@ class Api::V1::ItemsController < ApplicationController
 
   def update 
     item = Item.find(params[:id])
-    if item.update(item_params)
-      render json: ItemSerializer.new(item)
-    else
-      render json: { errors: item.errors.full_messages }, status: 400
-    end
+    item.update!(item_params)
+    render json: ItemSerializer.new(item)
   end
 
   def search
@@ -59,5 +53,9 @@ class Api::V1::ItemsController < ApplicationController
 
   def item_params
     params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
+  end
+
+  def invalid_response(error)
+    render json: ErrorSerializer.new(ErrorMessage.new(error.message, 400)).serialize_json, status: 400
   end
 end
